@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<h1>Панель администратора</h1>
+
+<p>Добро пожаловать, @User.Identity?.Name!</p>
+
+<p>Вы успешно прошли авторизацию.</p>
+
+<form asp-controller="Auth"
+      asp-action="Logout"
+      method="post">
+
+    <button type="submit">Выйти</button>
+</form>

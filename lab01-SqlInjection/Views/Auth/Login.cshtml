@@ -1,0 +1,68 @@
+@model SqlInjectionLab.Models.LoginModel
+
+@{
+    ViewData["Title"] = "Авторизация";
+}
+
+<h2>Вход в систему</h2>
+
+@if (ViewBag.Error != null)
+{
+    <p style="color: red">@ViewBag.Error</p>
+}
+
+<form id="loginForm" method="post">
+
+    @Html.AntiForgeryToken()
+
+    <div>
+        <label>Логин</label>
+        <input asp-for="Login" id="login" />
+    </div>
+
+    <br />
+
+    <div>
+        <label>Пароль</label>
+        <input asp-for="Password"
+               id="password"
+               type="password" />
+    </div>
+
+    <br />
+
+    <button type="submit"
+            formaction="/Auth/VulnerableLogin">
+        Войти без защиты
+    </button>
+
+    <button type="submit"
+            formaction="/Auth/SafeLogin">
+        Войти с защитой
+    </button>
+
+</form>
+
+<script>
+    function validateForm() {
+        const login = document.getElementById("login").value;
+        const password = document.getElementById("password").value;
+
+        if (!login || !password) {
+            alert("Заполните все поля");
+            return false;
+        }
+
+        if (!/^[a-zA-Z0-9_]+$/.test(login)) {
+            alert("Логин содержит недопустимые символы");
+            return false;
+        }
+
+        if (login.length > 50 || password.length > 100) {
+            alert("Слишком длинные данные");
+            return false;
+        }
+
+        return true;
+    }
+</script>
