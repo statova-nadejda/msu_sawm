@@ -1,0 +1,23 @@
+appsettings.json
+appsettings.Development.json
+**/appsettings.*.local.json
+.env
+.env.*
+
+# Результаты сборки
+bin/
+obj/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+
+# Пользовательские файлы
+*.user
+*.suo
+
+# Логи
+*.log
+logs/
+wwwroot/

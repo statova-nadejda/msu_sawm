@@ -1,0 +1,109 @@
+@model List<XssLab.Models.GuestEntry>
+
+@{
+    ViewData["Title"] = "Защищённая гостевая книга";
+}
+
+<h1>Защищённая гостевая книга</h1>
+
+<nav>
+    <a href="/Guest/Vulnerable">Уязвимый вариант</a>
+    |
+    <a href="/Guest/Safe">Защищённый вариант</a>
+</nav>
+
+<hr>
+
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+<form id="guestForm" method="post" action="/Guest/Create">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="mode" value="safe">
+
+    <p>
+        <label for="user">Имя</label><br>
+        <input id="user"
+               name="User"
+               type="text"
+               required
+               maxlength="100">
+    </p>
+
+    <p>
+        <label for="email">Email</label><br>
+        <input id="email"
+               name="Email"
+               type="email"
+               required
+               maxlength="200">
+    </p>
+
+    <p>
+        <label for="message">Сообщение</label><br>
+        <textarea id="message"
+                  name="TextMessage"
+                  rows="5"
+                  cols="60"
+                  required
+                  maxlength="2000"></textarea>
+    </p>
+
+    <p id="formError" class="text-danger" role="alert"></p>
+
+    <button type="submit">Добавить сообщение</button>
+</form>
+
+<hr>
+
+<h2>Сообщения</h2>
+
+@if (Model.Count == 0)
+{
+    <p>Сообщений пока нет.</p>
+}
+
+@foreach (var entry in Model)
+{
+    <article>
+        <h3>@entry.User</h3>
+
+        <p>Email: @entry.Email</p>
+
+        <div class="guest-message">@entry.TextMessage</div>
+
+        <p>
+            <small>
+                Запись № @entry.Id |
+                @entry.DataTimeMessage.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+            </small>
+        </p>
+    </article>
+
+    <hr>
+}
+
+<style>
+    .guest-message {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+</style>
+
+<script>
+    const form = document.getElementById('guestForm');
+    const error = document.getElementById('formError');
+
+    form.addEventListener('submit', function (event) {
+        const user = form.elements['User'].value;
+        const message = form.elements['TextMessage'].value;
+
+        error.textContent = '';
+
+        if (!user.trim() || !message.trim()) {
+            event.preventDefault();
+            error.textContent =
+                'Имя и сообщение не должны состоять из пробелов.';
+        }
+    });
+</script>

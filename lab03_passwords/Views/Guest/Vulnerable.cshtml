@@ -1,0 +1,89 @@
+@model List<XssLab.Models.GuestEntry>
+
+@{
+    ViewData["Title"] = "Уязвимая гостевая книга";
+}
+
+<h1>Уязвимая гостевая книга</h1>
+
+<nav>
+    <a href="/Guest/Vulnerable">Уязвимый вариант</a>
+    |
+    <a href="/Guest/Safe">Защищённый вариант</a>
+</nav>
+
+<hr>
+
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+<form method="post" action="/Guest/Create">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="mode" value="vulnerable">
+
+    <p>
+        <label for="user">Имя</label><br>
+        <input id="user"
+               name="User"
+               type="text"
+               required
+               maxlength="100">
+    </p>
+
+    <p>
+        <label for="email">Email</label><br>
+        <input id="email"
+               name="Email"
+               type="email"
+               required
+               maxlength="200">
+    </p>
+
+    <p>
+        <label for="message">Сообщение</label><br>
+        <textarea id="message"
+                  name="TextMessage"
+                  rows="5"
+                  cols="60"
+                  required
+                  maxlength="2000"></textarea>
+    </p>
+
+    <button type="submit">Добавить сообщение</button>
+</form>
+
+<hr>
+
+<h2>Сообщения</h2>
+
+@if (Model.Count == 0)
+{
+    <p>Сообщений пока нет.</p>
+}
+
+@foreach (var entry in Model)
+{
+    <article>
+        <h3>@Html.Raw(entry.User)</h3>
+
+        <p>Email: @Html.Raw(entry.Email)</p>
+
+        <div class="guest-message">@Html.Raw(entry.TextMessage)</div>
+
+        <p>
+            <small>
+                Запись № @entry.Id |
+                @entry.DataTimeMessage.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+            </small>
+        </p>
+    </article>
+
+    <hr>
+}
+
+<style>
+    .guest-message {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+</style>

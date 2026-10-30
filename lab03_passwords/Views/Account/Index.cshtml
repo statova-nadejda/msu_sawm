@@ -1,0 +1,113 @@
+@{
+    ViewData["Title"] = "Защита паролей";
+}
+
+<hr>
+
+<h1>Защита паролей</h1>
+
+@if (TempData["Message"] is string message)
+{
+    <div class="alert alert-info" role="status">
+        @message
+    </div>
+}
+
+<h2>Регистрация</h2>
+
+<p>
+    Пароль должен содержать от 8 до 128 символов:
+    большую и маленькую буквы, цифру и спецсимвол.
+</p>
+
+<form method="post" action="/Account/Register">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label for="registerLogin" class="form-label">
+            Логин
+        </label>
+
+        <input id="registerLogin"
+               name="login"
+               type="text"
+               class="form-control"
+               autocomplete="username"
+               maxlength="100"
+               required>
+    </div>
+
+    <div class="mb-3">
+        <label for="registerPassword" class="form-label">
+            Пароль
+        </label>
+
+        <input id="registerPassword"
+               name="password"
+               type="password"
+               class="form-control"
+               autocomplete="new-password"
+               maxlength="128"
+               required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Зарегистрировать
+    </button>
+</form>
+
+<hr>
+
+<h2>Проверка входа</h2>
+
+<form method="post" action="/Account/Login">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label for="loginName" class="form-label">
+            Логин
+        </label>
+
+        <input id="loginName"
+               name="login"
+               type="text"
+               class="form-control"
+               autocomplete="username"
+               maxlength="100"
+               required>
+    </div>
+
+    <div class="mb-3">
+        <label for="loginPassword" class="form-label">
+            Пароль
+        </label>
+
+        <input id="loginPassword"
+               name="password"
+               type="password"
+               class="form-control"
+               autocomplete="current-password"
+               required>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Проверить пароль
+    </button>
+</form>
+
+<hr>
+
+<h2>Преобразование старых паролей</h2>
+
+<p>
+    Для старых учебных записей будет создан хеш с солью.
+    Открытые пароли будут удалены из столбца password.
+</p>
+
+<form method="post" action="/Account/ConvertPasswords">
+    @Html.AntiForgeryToken()
+
+    <button type="submit" class="btn btn-warning">
+        Преобразовать пароли в хеши
+    </button>
+</form>
