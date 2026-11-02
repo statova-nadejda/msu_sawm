@@ -1,0 +1,21 @@
+@model Lab5.Models.AccessUser
+
+@{
+    Layout = null;
+}
+
+<h1>Кабинет администратора</h1>
+
+<p>Пользователь: @Model.Login</p>
+<p>Роль: @Model.Role</p>
+
+<p>
+    <a href="/Accounts/Index">
+        Просмотр и изменение аккаунтов
+    </a>
+</p>
+
+<form method="post" action="/Auth/Logout">
+    @Html.AntiForgeryToken()
+    <button type="submit">Выйти</button>
+</form>

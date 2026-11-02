@@ -1,0 +1,60 @@
+@model List<Lab5.Models.AccessUser>
+
+@{
+    Layout = null;
+
+    var currentRole = ViewData["CurrentRole"] as string;
+
+    var homeUrl = currentRole == "admin"
+        ? "/Admin/Index"
+        : "/Manager/Index";
+}
+
+<h1>Учётные записи</h1>
+
+<p>
+    <a href="@homeUrl">Вернуться в кабинет</a>
+</p>
+
+<table border="1" cellpadding="8">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Логин</th>
+            <th>Роль</th>
+            <th>Действие</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var account in Model)
+        {
+            <tr>
+                <td>@account.Id</td>
+                <td>@account.Login</td>
+                <td>@(account.Role ?? "Обычный аккаунт")</td>
+
+                <td>
+                    @if (currentRole == "admin" ||
+                         account.Role == null)
+                    {
+                        <a href="/Accounts/Edit/@account.Id">
+                            Изменить
+                        </a>
+                    }
+                    else
+                    {
+                        <span>Нет доступа к изменению</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<hr>
+
+<form method="post" action="/Auth/Logout">
+    @Html.AntiForgeryToken()
+    <button type="submit">Выйти</button>
+</form>

@@ -1,0 +1,25 @@
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Нет доступа</title>
+</head>
+<body>
+    <h1>Нет доступа к закрытым кабинетам</h1>
+
+    <p>
+        Вы вошли, но вашему аккаунту не назначена
+        роль администратора или менеджера.
+    </p>
+
+    <form method="post" action="/Auth/Logout">
+        @Html.AntiForgeryToken()
+
+        <button type="submit">Выйти</button>
+    </form>
+</body>
+</html>

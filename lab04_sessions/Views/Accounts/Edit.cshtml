@@ -1,0 +1,33 @@
+@model Lab5.Models.EditAccountModel
+
+@{
+    Layout = null;
+}
+
+<h1>Изменение логина</h1>
+
+@Html.ValidationSummary()
+
+<form method="post" action="/Accounts/Edit/@Model.Id">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           name="Id"
+           value="@Model.Id">
+
+    <p>
+        <label for="login">Новый логин</label><br>
+
+        <input id="login"
+               name="Login"
+               value="@Model.Login"
+               maxlength="100"
+               required>
+    </p>
+
+    <button type="submit">Сохранить</button>
+</form>
+
+<p>
+    <a href="/Accounts/Index">Отмена</a>
+</p>

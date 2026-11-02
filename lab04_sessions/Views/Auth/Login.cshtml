@@ -1,0 +1,51 @@
+@model Lab5.Models.AccessLoginModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Вход</title>
+</head>
+<body>
+    <h1>Вход в приложение</h1>
+
+    @Html.ValidationSummary()
+
+    <form method="post" action="/Auth/Login">
+        @Html.AntiForgeryToken()
+
+        <p>
+            <label for="login">Логин</label><br>
+
+            <input id="login"
+                   name="Login"
+                   value="@Model.Login"
+                   maxlength="100"
+                   autocomplete="username"
+                   required>
+        </p>
+
+        <p>
+            <label for="password">Пароль</label><br>
+
+            <input id="password"
+                   name="Password"
+                   type="password"
+                   autocomplete="current-password"
+                   required>
+        </p>
+
+        <button type="submit">Войти</button>
+    </form>
+
+    <hr>
+
+    <a href="/Demo/Admin">
+        Демонстрация незащищённой страницы
+    </a>
+</body>
+</html>
