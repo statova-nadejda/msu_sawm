@@ -1,5 +1,6 @@
 using Lab5.Models;
 using Lab5.Services;
+using Lab5.Middleware;
 using Microsoft.AspNetCore.Identity;
 using Npgsql;
 
@@ -21,12 +22,15 @@ builder.Services.AddScoped<
     IPasswordHasher<AccessUser>,
     PasswordHasher<AccessUser>>();
 
+builder.Services.AddSingleton<SecurityLog>();
+
 var app = builder.Build();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseMiddleware<SecurityLoggingMiddleware>();
 
 app.MapControllerRoute(
     name: "default",

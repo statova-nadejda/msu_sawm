@@ -21,3 +21,4 @@ obj/
 *.log
 logs/
 wwwroot/
+**/Logs/

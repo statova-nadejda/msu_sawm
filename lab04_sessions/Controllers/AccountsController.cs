@@ -1,6 +1,7 @@
 using Lab5.Filters;
 using Lab5.Models;
 using Lab5.Services;
+using Lab5.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 
@@ -41,6 +42,10 @@ public class AccountsController : Controller
 
         if (CurrentUser.Role != "admin" && account.Role != null)
         {
+            HttpContext.Items[
+                SecurityLoggingMiddleware.EventKey] =
+                "authorization.denied";
+                
             return StatusCode(StatusCodes.Status403Forbidden);
         }
 
@@ -113,6 +118,9 @@ public class AccountsController : Controller
 
             return View(model);
         }
+        HttpContext.Items[
+            SecurityLoggingMiddleware.EventKey] =
+            "account.login_changed";
 
         return RedirectToAction(nameof(Index));
     }

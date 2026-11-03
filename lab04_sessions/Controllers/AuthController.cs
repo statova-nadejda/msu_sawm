@@ -1,5 +1,7 @@
 using Lab5.Models;
 using Lab5.Services;
+using Lab5.Filters;
+using Lab5.Middleware;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,6 +38,10 @@ public class AuthController : Controller
 
         if (!ModelState.IsValid)
         {
+        HttpContext.Items[
+            SecurityLoggingMiddleware.EventKey] =
+            "login.validation_failed";
+
             return View(model);
         }
 
@@ -57,7 +63,6 @@ public class AuthController : Controller
             }
             else
             {
-                // Совместимость с открытыми паролями из ЛР1.
                 validPassword =
                     account.Password != null &&
                     account.Password == model.Password;
@@ -66,6 +71,10 @@ public class AuthController : Controller
 
         if (!validPassword || account == null)
         {
+            HttpContext.Items[
+                SecurityLoggingMiddleware.EventKey] =
+                "login.failed";
+
             ModelState.AddModelError(
                 "",
                 "Неверный логин или пароль.");
@@ -76,6 +85,13 @@ public class AuthController : Controller
         await _store.StartSessionAsync(
             HttpContext,
             account.User.Id);
+
+        HttpContext.Items[
+            PermissionFilter.CurrentUserKey] = account.User;
+
+        HttpContext.Items[
+            SecurityLoggingMiddleware.EventKey] =
+            "login.succeeded";
 
         return account.User.Role switch
         {
@@ -95,7 +111,19 @@ public class AuthController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
+        var user = await _store.GetCurrentUserAsync(HttpContext);
+
+        if (user != null)
+        {
+            HttpContext.Items[
+                PermissionFilter.CurrentUserKey] = user;
+        }
+
         await _store.EndSessionAsync(HttpContext);
+
+        HttpContext.Items[
+            SecurityLoggingMiddleware.EventKey] =
+            user == null ? "logout.anonymous" : "logout.succeeded";
 
         return RedirectToAction(nameof(Login));
     }

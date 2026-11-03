@@ -1,4 +1,5 @@
 using Lab5.Services;
+using Lab5.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -40,6 +41,10 @@ public class PermissionFilter : IAsyncActionFilter
 
         if (user == null)
         {
+            context.HttpContext.Items[
+                SecurityLoggingMiddleware.EventKey] =
+                "authentication.required";
+
             await _store.EndSessionAsync(context.HttpContext);
 
             context.Result = new RedirectToActionResult(
@@ -50,19 +55,24 @@ public class PermissionFilter : IAsyncActionFilter
             return;
         }
 
+        context.HttpContext.Items[CurrentUserKey] = user;
+
         var allowed = await _store.HasPermissionAsync(
             user.Role,
             _permission);
 
         if (!allowed)
         {
+
+            context.HttpContext.Items[
+                SecurityLoggingMiddleware.EventKey] =
+                "authorization.denied";
+
             context.Result = new StatusCodeResult(
                 StatusCodes.Status403Forbidden);
 
             return;
         }
-
-        context.HttpContext.Items[CurrentUserKey] = user;
 
         await next();
     }
